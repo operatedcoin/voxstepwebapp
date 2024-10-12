@@ -90,42 +90,67 @@ export default function chapterThree() {
    const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
    const [fadeAnim] = useState(new Animated.Value(0));
    const [hideAnswers, setHideAnswers] = useState<boolean>(false);
+   const [buttonsFadeAnim, setButtonsFadeAnim] = useState<Animated.Value[]>([]);
  
    useEffect(() => {
      setDisplayedText('');
      setTypingIndex(0);
      setIsTypingComplete(false);
      fadeAnim.setValue(0);
+     setButtonsFadeAnim(
+       questions[currentQuestionIndex].answers.map(() => new Animated.Value(0))
+     );
    }, [currentQuestionIndex]);
  
    useEffect(() => {
-     if (typingIndex < questions[currentQuestionIndex].question.length) {
-       const timeout = setTimeout(() => {
-         setDisplayedText(
-           (prev) => prev + questions[currentQuestionIndex].question[typingIndex]
-         );
-         setTypingIndex(typingIndex + 1);
-       }, 50);
-       return () => clearTimeout(timeout);
-     } else {
-       const pauseTimeout = setTimeout(() => {
-         setIsTypingComplete(true);
-         Animated.timing(fadeAnim, {
-           toValue: 1,
-           duration: 500,
-           useNativeDriver: true,
-         }).start();
-         if (currentQuestionIndex === questions.length - 1) {
-           setTimeout(() => {
-             fadeOutSound('mystery', 2000);
-             router.push('./chapterFour');
-           }, 3000);
-         }
-       }, 1000);
-       return () => clearTimeout(pauseTimeout);
-     }
-   }, [typingIndex, currentQuestionIndex, fadeAnim]);
+    if (typingIndex < questions[currentQuestionIndex].question.length) {
+      const delay = typingIndex === 0 ? 2000 : 50; // Delay first letter by 2000ms, others by 50ms
+      const timeout = setTimeout(() => {
+        setDisplayedText(
+          (prev) => prev + questions[currentQuestionIndex].question[typingIndex]
+        );
+        setTypingIndex(typingIndex + 1);
+      }, delay);
+      return () => clearTimeout(timeout);
+    } else {
+      // Once typing is complete
+      const pauseTimeout = setTimeout(() => {
+        setIsTypingComplete(true);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+        if (currentQuestionIndex === questions.length - 1) {
+          setTimeout(() => {
+            fadeOutSound('mystery', 2000);
+            router.push('./chapterFour');
+          }, 3000);
+        }
+      }, 1000);
+      return () => clearTimeout(pauseTimeout);
+    }
+  }, [typingIndex, currentQuestionIndex, fadeAnim]);
+  
  
+   useEffect(() => {
+     if (isTypingComplete && buttonsFadeAnim.length > 0) {
+       const randomizedIndexes = buttonsFadeAnim
+         .map((_, index) => index)
+         .sort(() => Math.random() - 0.5);
+
+       randomizedIndexes.forEach((index, i) => {
+         setTimeout(() => {
+           Animated.timing(buttonsFadeAnim[index], {
+             toValue: 1,
+             duration: 500,
+             useNativeDriver: true,
+           }).start();
+         }, i * 1000); // Delay between buttons appearing
+       });
+     }
+   }, [isTypingComplete, buttonsFadeAnim]);
+
    // Function to handle answer selection
    const handleAnswerPress = (answer: string) => {
      // Save the selected answer
@@ -148,22 +173,23 @@ export default function chapterThree() {
        {isTypingComplete && !hideAnswers && questions[currentQuestionIndex].answers.length > 0 && (
          <Animated.View style={[styles.bottomContainer, { opacity: fadeAnim }]}>
            {questions[currentQuestionIndex].answers.map((answer, index) => (
-             <Pressable
-               key={index}
-               onPress={() => handleAnswerPress(answer)}
-               style={({ pressed }) => [
-                 styles.button,
-                 index === 0 && styles.firstButton,
-                 index > 0 &&
-                   index < questions[currentQuestionIndex].answers.length - 1 &&
-                   styles.remainingButton,
-                 index === questions[currentQuestionIndex].answers.length - 1 &&
-                   styles.lastButton,
-                 pressed && styles.buttonPressed,
-               ]}
-             >
-               <Text style={styles.buttonText}>{answer}</Text>
-             </Pressable>
+             <Animated.View key={index} style={{ opacity: buttonsFadeAnim[index] }}>
+               <Pressable
+                 onPress={() => handleAnswerPress(answer)}
+                 style={({ pressed }) => [
+                   styles.button,
+                   index === 0 && styles.firstButton,
+                   index > 0 &&
+                     index < questions[currentQuestionIndex].answers.length - 1 &&
+                     styles.remainingButton,
+                   index === questions[currentQuestionIndex].answers.length - 1 &&
+                     styles.lastButton,
+                   pressed && styles.buttonPressed,
+                 ]}
+               >
+                 <Text style={styles.buttonText}>{answer}</Text>
+               </Pressable>
+             </Animated.View>
            ))}
          </Animated.View>
        )}
