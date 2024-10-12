@@ -1,13 +1,30 @@
-import { Text, Image, Pressable, ImageBackground } from 'react-native';
+import { Text, Image, Pressable, ImageBackground, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
+import { useEffect } from 'react';
+import ReactGA from 'react-ga4';
+
 
 export default function Index() {
   const router = useRouter();
   const { preloadSounds } = useSound();
 
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      ReactGA.initialize('G-RSYG02G559'); // Ensure this is your actual Measurement ID
+      ReactGA.send({ hitType: 'pageview', page: window.location.pathname + window.location.search });
+    }
+  }, []);
+
   const handleBeginButtonPress = async () => {
-    await preloadSounds(); // Preload and unlock audio context - files are listed in the SoundContext component
+    if (Platform.OS === 'web') {
+      ReactGA.event({
+        category: 'Navigation',
+        action: 'Clicked Begin Button',
+      });
+    }
+
+    await preloadSounds(); // Preload and unlock audio context
     router.push('./chapterOne');
   };
 
