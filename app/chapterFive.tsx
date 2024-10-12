@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// ChapterFive.tsx
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,6 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
+import { AnswerContext } from '@/components/AnswerContext';
 
 // BlinkingIcon Component
 function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
@@ -44,21 +46,53 @@ function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
   );
 }
 
-export default function chapterFive() {
+export default function ChapterFive() {
   const router = useRouter();
   const { playSound, stopSound } = useSound();
+  const { selectedAnswers } = useContext(AnswerContext);
 
   useEffect(() => {
     playSound('mystery');
   }, []);
 
-  // Define the text to display
-  const textToDisplay =
-    "I've been looking forward to someone that is XXXXXXXXX. And finally I've found you. To get away, we first need to get lost...";
+  // Mapping of answer codes to text fragments
+  const answerCodeToText: { [key: string]: string } = {
+    // Question 1
+    '1a': 'is not very good with maps',
+    '1b': 'is not very good with maps',
+    '1c': 'can handle a map',
+    '1d': 'can handle a map',
+    '1e': 'doesn’t want to talk about maps',
+    // Question 2
+    '2a': 'has comfortable shoes',
+    '2b': 'has uncomfortable shoes',
+    '2c': 'isn’t wearing shoes because no one told them they should',
+    '2d': 'doesn’t want to talk about shoes',
+    // Question 3
+    '3a': 'and hasn’t had a major run in with the law',
+    '3b': 'and may have had a minor run-in with the law',
+    '3c': "and has had a run in with the law but doesn’t want to talk about it",
+    '3d': "and has had a run in with the law and wants to talk about it",
+    '3e': 'and is skeptical of sharing any info with a stranger',
+  };
+
+  // Build the dynamic text
+  const baseTextStart = "I've been looking for someone that ";
+  const baseTextEnd = " I've finally found you and I need your help.";
+
+  const textFragments = selectedAnswers
+    .slice(0, 3)
+    .map((code) => answerCodeToText[code]);
+
+  const middleText = textFragments.join(', ');
+
+  const initialText = `${baseTextStart}${middleText}.${baseTextEnd}`;
 
   // State variables
+  const [stage, setStage] = useState(1);
   const [displayedText, setDisplayedText] = useState<string>('');
   const [typingIndex, setTypingIndex] = useState<number>(0);
+  const [textToDisplay, setTextToDisplay] = useState<string>(initialText);
 
   useEffect(() => {
     if (typingIndex < textToDisplay.length) {
@@ -68,13 +102,28 @@ export default function chapterFive() {
       }, 50);
       return () => clearTimeout(timeout);
     } else {
-      const timer = setTimeout(() => {
-        stopSound('mystery');
-        router.push('./end');
-      }, 5000);
-      return () => clearTimeout(timer);
+      // Typing is complete
+      if (stage === 1) {
+        // Initial text typed completely
+        const timer = setTimeout(() => {
+          // After 6 seconds, proceed to next stage
+          setDisplayedText(''); // Clear the displayed text
+          setTextToDisplay('But to get away, we first need to get lost.');
+          setTypingIndex(0);
+          setStage(2);
+        }, 5000);
+        return () => clearTimeout(timer);
+      } else if (stage === 2) {
+        // Final line typed completely
+        const timer = setTimeout(() => {
+          // After 5 seconds, navigate to './end'
+          stopSound('mystery');
+          router.push('./end');
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [typingIndex]);
+  }, [typingIndex, textToDisplay, stage]);
 
   return (
     <View style={styles.container}>
