@@ -1,13 +1,15 @@
 import { Text, Image, Pressable, ImageBackground, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
+import { KeepAwakeContext } from '@/components/KeepAwakeContext';
 import ReactGA from 'react-ga4';
 
 
 export default function Index() {
   const router = useRouter();
   const { preloadSounds } = useSound();
+  const { setKeepAwake } = useContext(KeepAwakeContext);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -25,6 +27,7 @@ export default function Index() {
     }
 
     await preloadSounds(); // Preload and unlock audio context
+    setKeepAwake(true); 
     router.push('./chapterOne');
   };
 
