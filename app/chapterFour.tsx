@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, Dimensions } from 'react-native';
+import { View, StyleSheet, Button, Text, Dimensions, ImageBackground, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
 import { AVPlaybackStatus } from 'expo-av';
@@ -14,7 +14,7 @@ export default function ChapterFour() {
   const { width, height } = Dimensions.get('window');
   const startPosition = { x: -width / 2 + 38, y: -height / 2 + 45 }; 
   const endPosition = { x: 0, y: 0 }; 
-  const startSize = 0.25; 
+  const startSize = 0.1; 
   const endSize = 1;
 
   useEffect(() => {
@@ -64,9 +64,20 @@ export default function ChapterFour() {
   };
 
   return (
+    <ImageBackground
+    source={require('@/assets/images/voxstep_bg_gradient.png')}
+    resizeMode='stretch'
+    style={{
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <View style={styles.container}>
       <BlinkingIcon
-        source={require('@/assets/images/blackCircle.png')}
+        source={require('@/assets/images/entity.png')}
         shouldReverse={shouldReverse}
         startPosition={startPosition}
         endPosition={endPosition}
@@ -75,8 +86,11 @@ export default function ChapterFour() {
         onReverseAnimationComplete={onReverseAnimationComplete}
         animationDelay={0} 
       />
-      <Button title="Skip" onPress={handleSkip} />
+      <Pressable style={styles.skipButton} onPress={handleSkip}>
+        <Text style={styles.skipText}>Skip</Text>
+      </Pressable>
     </View>
+    </ImageBackground>
   );
 }
 
@@ -85,5 +99,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  skipButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  skipText: {
+    fontSize: 9,
+    color: '#C7019C',
+    textDecorationLine: 'underline',
   },
 });

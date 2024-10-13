@@ -1,6 +1,6 @@
 // ChapterTwo.tsx
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { BlinkingIcon } from '@/components/BlinkingIcon';
 
@@ -11,16 +11,27 @@ export default function ChapterTwo() {
   const startPosition = { x: 0, y: 0 }; // Center of the screen
   const endPosition = { x: -width / 2 + 38, y: -height / 2 + 45 }; // Top left
   const startSize = 1; // Full size
-  const endSize = 0.25; // Smaller size
+  const endSize = 0.15; // Smaller size
 
   const onAnimationComplete = () => {
     router.push('./chapterThree');
   };
 
   return (
+    <ImageBackground
+    source={require('@/assets/images/voxstep_bg_gradient.png')}
+    resizeMode='stretch'
+    style={{
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
     <View style={styles.container}>
       <BlinkingIcon
-        source={require('@/assets/images/blackCircle.png')}
+        source={require('@/assets/images/entity.png')}
         shouldReverse={false} 
         startPosition={startPosition}
         endPosition={endPosition}
@@ -30,6 +41,7 @@ export default function ChapterTwo() {
         onAnimationComplete={onAnimationComplete} // Navigate to Chapter Three when done
       />
     </View>
+    </ImageBackground>
   );
 }
 

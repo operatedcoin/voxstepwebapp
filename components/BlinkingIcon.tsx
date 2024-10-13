@@ -35,13 +35,13 @@ export const BlinkingIcon: React.FC<BlinkingIconProps> = ({
     const opacityAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
-          toValue: 0,
-          duration: 800,
+          toValue: 0.5,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 800,
+          duration: 500,
           useNativeDriver: true,
         }),
       ])
@@ -56,13 +56,13 @@ export const BlinkingIcon: React.FC<BlinkingIconProps> = ({
         Animated.timing(position, {
           toValue: endPosition,
           duration: 800,
-          easing: Easing.inOut(Easing.ease),
+          easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(size, {
           toValue: endSize,
           duration: 800,
-          easing: Easing.inOut(Easing.ease),
+          easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
       ]).start(() => {
@@ -89,13 +89,13 @@ export const BlinkingIcon: React.FC<BlinkingIconProps> = ({
         Animated.timing(position, {
           toValue: startPosition, // move back to original position
           duration: 800,
-          easing: Easing.inOut(Easing.ease),
+          easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(size, {
           toValue: startSize, // shrink the size back
           duration: 800,
-          easing: Easing.inOut(Easing.ease),
+          easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
       ]).start(() => {
@@ -127,8 +127,8 @@ export const BlinkingIcon: React.FC<BlinkingIconProps> = ({
 
 const styles = StyleSheet.create({
   circleImage: {
-    width: 150,
-    height: 150,
+    width: 250,
+    height: 250,
     resizeMode: 'contain',
   },
 });

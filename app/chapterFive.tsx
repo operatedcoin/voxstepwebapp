@@ -1,14 +1,9 @@
 // ChapterFive.tsx
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  ImageSourcePropType,
-} from 'react-native';
+import {View, Text, StyleSheet, Animated, ImageSourcePropType, ImageBackground, Pressable} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
+import globalStyles from '@/constants/globalStylesheet';
 import { AnswerContext } from '@/components/AnswerContext';
 
 // BlinkingIcon Component
@@ -41,7 +36,12 @@ function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
   return (
     <Animated.Image
       source={source}
-      style={[styles.circleImage, { opacity }]}
+      style={[globalStyles.convoIconImage, { opacity }, {
+        transform: [
+          { translateX: 1 },
+          { translateY: 4 },
+        ],
+      },]}
     />
   );
 }
@@ -106,14 +106,11 @@ export default function ChapterFive() {
       if (stage === 1) {
         // Initial text typed completely
         const timer = setTimeout(() => {
-          // After 6 seconds, proceed to next stage
-          setDisplayedText(''); // Clear the displayed text
-          setTextToDisplay('But to get away, we first need to get lost.');
-          setTypingIndex(0);
+          // Show button instead of immediately continuing
           setStage(2);
-        }, 5000);
+        }, 1000);
         return () => clearTimeout(timer);
-      } else if (stage === 2) {
+      } else if (stage === 3) {
         // Final line typed completely
         const timer = setTimeout(() => {
           // After 5 seconds, navigate to './end'
@@ -125,38 +122,44 @@ export default function ChapterFive() {
     }
   }, [typingIndex, textToDisplay, stage]);
 
+  const handleButtonPress = () => {
+    setDisplayedText(''); // Clear the displayed text
+    setTextToDisplay('But to get away, we first need to get lost.');
+    setTypingIndex(0);
+    setStage(3);
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <Text style={styles.questionText}>
-          <BlinkingIcon source={require('@/assets/images/blackCircle.png')} />
-          {displayedText}
-        </Text>
+    <ImageBackground
+      source={require('@/assets/images/voxstep_bg_gradient.png')}
+      resizeMode='stretch'
+      style={{
+        flex: 1,
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <View style={globalStyles.convoContainer}>
+        <View style={globalStyles.convoTopContainer}>
+          <Text style={globalStyles.questionText}>
+            <BlinkingIcon source={require('@/assets/images/entity.png')} />
+            {displayedText}
+          </Text>
+        </View>
+        {stage === 2 && (
+          <View style={globalStyles.convoBottomContainer}>
+            <Pressable
+              onPress={handleButtonPress}
+              style={({ pressed }) => [
+                globalStyles.questionButton, globalStyles.questionSingleButton,
+                pressed && globalStyles.questionButtonPressed,
+              ]}
+            >
+              <Text style={globalStyles.questionButtonText}>Um, okay</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
-    </View>
+    </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  topContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-  },
-  questionText: {
-    fontSize: 48,
-    textAlign: 'left',
-    marginBottom: 20,
-    lineHeight: 48,
-  },
-  circleImage: {
-    width: 34,
-    height: 34,
-    marginRight: 10,
-    resizeMode: 'contain',
-  },
-});

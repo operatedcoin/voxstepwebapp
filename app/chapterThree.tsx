@@ -1,18 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Animated,
-  ImageSourcePropType,
-  Image,
-} from 'react-native';
+import {View, Text, Pressable, Dimensions, Animated, ImageSourcePropType, ImageBackground} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
-import { AnswerContext
-  
- } from '@/components/AnswerContext';
+import globalStyles from '@/constants/globalStylesheet';
+import { AnswerContext} from '@/components/AnswerContext';
 interface Question {
   question: string;
   answers: string[];
@@ -26,13 +17,13 @@ function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
     const opacityAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
-          toValue: 0,
-          duration: 800,
+          toValue: 0.3,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 800,
+          duration: 500,
           useNativeDriver: true,
         }),
       ])
@@ -48,7 +39,12 @@ function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
   return (
     <Animated.Image
       source={source}
-      style={[styles.circleImage, { opacity }]}
+      style={[globalStyles.convoIconImage, { opacity }, {
+        transform: [
+          { translateX: 1 },
+          { translateY: 4 },
+        ],
+      },]}
     />
   );
 }
@@ -187,97 +183,48 @@ export default function ChapterThree() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <Text style={styles.questionText}>
-          <BlinkingIcon source={require('@/assets/images/blackCircle.png')} />
+    <ImageBackground
+    source={require('@/assets/images/voxstep_bg_gradient.png')}
+    resizeMode='stretch'
+    style={{
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    }}
+  >
+    <View style={globalStyles.convoContainer}>
+      <View style={globalStyles.convoTopContainer}>
+        <Text style={globalStyles.questionText}>
+          <BlinkingIcon source={require('@/assets/images/entity.png')} />
           {displayedText}
         </Text>
       </View>
       {isTypingComplete &&
         !hideAnswers &&
         questions[currentQuestionIndex].answers.length > 0 && (
-          <Animated.View style={[styles.bottomContainer, { opacity: fadeAnim }]}>
+          <Animated.View style={[globalStyles.convoBottomContainer, { opacity: fadeAnim }]}>
             {questions[currentQuestionIndex].answers.map((answer, index) => (
               <Animated.View key={index} style={{ opacity: buttonsFadeAnim[index] }}>
                 <Pressable
                   onPress={() => handleAnswerPress(answer, index)}
                   style={({ pressed }) => [
-                    styles.button,
-                    index === 0 && styles.firstButton,
+                    globalStyles.questionButton,
+                    index === 0 && globalStyles.questionFirstButton,
                     index > 0 &&
                       index < questions[currentQuestionIndex].answers.length - 1 &&
-                      styles.remainingButton,
+                      globalStyles.questionRemainingButton,
                     index === questions[currentQuestionIndex].answers.length - 1 &&
-                      styles.lastButton,
-                    pressed && styles.buttonPressed,
+                      globalStyles.questionLastButton,
+                    pressed && globalStyles.questionButtonPressed,
                   ]}
                 >
-                  <Text style={styles.buttonText}>{answer}</Text>
+                  <Text style={globalStyles.questionButtonText}>{answer}</Text>
                 </Pressable>
               </Animated.View>
             ))}
           </Animated.View>
         )}
     </View>
+    </ImageBackground>
   );
 }
- 
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     padding: 20,
-   },
-   topContainer: {
-     flex: 1,
-     justifyContent: 'flex-start',
-     alignItems: 'flex-start',
-   },
-   bottomContainer: {
-     justifyContent: 'flex-end',
-   },
-   questionText: {
-     fontSize: 48,
-     textAlign: 'left',
-     marginBottom: 20,
-     lineHeight: 48,
-   },
-   circleImage: {
-    width: 34,
-    height: 34,
-    marginRight: 10,
-    resizeMode: 'contain',
-  },  
-   button: {
-     width: '100%',
-     paddingVertical: 15,
-     paddingHorizontal: 20,
-     borderWidth: 1,
-     borderColor: '#000',
-   },
-   firstButton: {
-     borderTopLeftRadius: 10,
-     borderTopRightRadius: 10,
-   },
-   remainingButton: {
-     borderLeftWidth: 1,
-     borderRightWidth: 1,
-     borderBottomWidth: 1,
-     borderTopWidth: 0,
-   },
-   lastButton: {
-     borderBottomLeftRadius: 10,
-     borderBottomRightRadius: 10,
-     borderLeftWidth: 1,
-     borderRightWidth: 1,
-     borderBottomWidth: 1,
-     borderTopWidth: 0,
-   },
-   buttonPressed: {
-     backgroundColor: '#ddd',
-   },
-   buttonText: {
-     textAlign: 'center',
-     fontSize: 18,
-   },
- });

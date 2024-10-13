@@ -1,8 +1,9 @@
-import { Text, Image, Pressable, ImageBackground, Platform } from 'react-native';
+import { Text, Image, Pressable, ImageBackground, Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
 import { useEffect, useContext } from 'react';
 import { KeepAwakeContext } from '@/components/KeepAwakeContext';
+import globalStyles from '@/constants/globalStylesheet';
 import ReactGA from 'react-ga4';
 
 
@@ -43,52 +44,35 @@ export default function Index() {
         alignItems: 'center',
       }}
     >
-
+    <View style={globalStyles.container}>
     <Image
       source={require('@/assets/images/voxstep_logo.png')}
       style={{ width: 240, height: 91, marginBottom: 20 }}
       />
 
 
-
+  <View style={globalStyles.briefingTextContainer}>
     <Text
-      style={{color: '#C0FF91',marginBottom: 20, textAlign: 'center'}}>
-      Hi, welcome to Voxstep.{'\n'}
-      This is a demo experience that lasts about 3–5 minutes.{'\n'}
+      style={globalStyles.briefingText}>
+      Hi, welcome to Voxstep.{'\n'}{'\n'}
+      This is a demo experience that lasts about 3–5 minutes.{'\n'}{'\n'}
       We recommend you try this demo when you're in a public place or surrounded by other people.{'\n'}
     </Text>
     <Pressable
         onPress={handleBeginButtonPress}
-        style={{
-          backgroundColor: '#C7019C',
-          paddingVertical: 12,
-          paddingHorizontal: 50,
-          borderRadius: 25,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={globalStyles.primaryButton}
       >
-        <Text
-          style={{
-            color: '#C0FF91',
-            fontSize: 16,
-          }}
-        >
+        <Text style={globalStyles.primaryButtonText}>
           Let's begin</Text>
       </Pressable>
+      </View>
 
       {/* Bottom Image anchored to the screen's bottom */}
       <Image
         source={require('@/assets/images/operatedcoinLogo.png')} 
-        style={{
-          position: 'absolute',
-          marginBottom: 50,
-          bottom: 0, 
-          width: 165,
-          height: 14,
-          resizeMode: 'contain', 
-        }}
+        style={globalStyles.bottomLogoImage}
       />
+      </View>
     </ImageBackground>
   );
 }

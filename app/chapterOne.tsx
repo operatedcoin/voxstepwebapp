@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { Text, Image, Pressable, ImageBackground } from 'react-native';
+import { Text, Image, Pressable, ImageBackground, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSound } from '@/components/SoundContext';
+import globalStyles from '@/constants/globalStylesheet';
 
 export default function chapterOne() {
   const router = useRouter();
@@ -29,51 +30,35 @@ export default function chapterOne() {
       }}
     >
 
+    <View style={globalStyles.container}>
     <Image
-      source={require('@/assets/images/voxstep_logo.png')}
-      style={{ width: 240, height: 91, marginBottom: 20 }}
-      />
+      source={require('@/assets/images/volumeIcon.png')}
+      style={{width: 121, height: 91, marginBottom: 20 }}
+    />
 
-
-
+    <View style={globalStyles.briefingTextContainer}>
     <Text
-      style={{color: '#C0FF91',marginBottom: 20, textAlign: 'center'}}>
+      style={globalStyles.briefingText}>
       This experience uses audio, so we recommend using headphones if you have them. {'\n'}{'\n'}
       Now’s your chance to turn your volume on or up. If you can hear the music, click the button below.{'\n'}{'\n'}
       We recommend you try this demo when you're in a public place or surrounded by other people.
     </Text>
     <Pressable
         onPress={handleBeginButtonPress}
-        style={{
-          backgroundColor: '#C7019C',
-          paddingVertical: 12,
-          paddingHorizontal: 50,
-          borderRadius: 25,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        style={globalStyles.primaryButton}
       >
-        <Text
-          style={{
-            color: '#C0FF91',
-            fontSize: 16,
-          }}
-        >
+        <Text style={globalStyles.primaryButtonText}>
           I can hear the music</Text>
       </Pressable>
+      </View>
 
       {/* Bottom Image anchored to the screen's bottom */}
       <Image
         source={require('@/assets/images/operatedcoinLogo.png')}
-        style={{
-          position: 'absolute',
-          marginBottom: 50,
-          bottom: 0, 
-          width: 165,
-          height: 14,
-          resizeMode: 'contain',
-        }}
+        style={globalStyles.bottomLogoImage}
       />
+      </View>
+
     </ImageBackground>
   );
 }
