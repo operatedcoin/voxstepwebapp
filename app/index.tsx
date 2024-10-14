@@ -54,16 +54,16 @@ export default function Index() {
   <View style={globalStyles.briefingTextContainer}>
     <Text
       style={globalStyles.briefingText}>
-      Hi, welcome to Voxstep.{'\n'}{'\n'}
-      This is a demo experience that lasts about 3–5 minutes.{'\n'}{'\n'}
-      We recommend you try this demo when you're in a public place or surrounded by other people.{'\n'}
+      A short performance. A quick escape.{'\n'}{'\n'}
+     Run Time: 3 - 5 minutes.{'\n'}{'\n'}
+      We recommend trying this demo when you're in a public place or surrounded by other people.{'\n'}
     </Text>
     <Pressable
         onPress={handleBeginButtonPress}
         style={globalStyles.primaryButton}
       >
         <Text style={globalStyles.primaryButtonText}>
-          Let's begin</Text>
+          Continue</Text>
       </Pressable>
       </View>
 

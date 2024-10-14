@@ -64,6 +64,7 @@ const globalStyles = StyleSheet.create({
     fontSize: 36,
     textAlign: 'left',
     marginBottom: 20,
+    marginTop: 60,
     lineHeight: 38,
     color:'#C0FF91',
   },

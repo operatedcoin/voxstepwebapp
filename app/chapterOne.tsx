@@ -39,16 +39,15 @@ export default function chapterOne() {
     <View style={globalStyles.briefingTextContainer}>
     <Text
       style={globalStyles.briefingText}>
-      This experience uses audio, so we recommend using headphones if you have them. {'\n'}{'\n'}
-      Now’s your chance to turn your volume on or up. If you can hear the music, click the button below.{'\n'}{'\n'}
-      We recommend you try this demo when you're in a public place or surrounded by other people.
+      This experience uses audio. We recommend using headphones if you have them. {'\n'}{'\n'}
+      Now’s your chance to turn your volume on or up. If you can hear the music, click 'Begin'.{'\n'}{'\n'}
     </Text>
     <Pressable
         onPress={handleBeginButtonPress}
         style={globalStyles.primaryButton}
       >
         <Text style={globalStyles.primaryButtonText}>
-          I can hear the music</Text>
+          Begin</Text>
       </Pressable>
       </View>
 
