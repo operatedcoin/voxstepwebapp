@@ -78,7 +78,7 @@ export default function ChapterFive() {
 
   // Build the dynamic text
   const baseTextStart = "I've been looking for someone that ";
-  const baseTextEnd = " I've finally found you and I need your help.";
+  const baseTextEnd = "";
 
   const textFragments = selectedAnswers
     .slice(0, 3)
@@ -99,6 +99,9 @@ export default function ChapterFive() {
       const timeout = setTimeout(() => {
         setDisplayedText((prev) => prev + textToDisplay[typingIndex]);
         setTypingIndex(typingIndex + 1);
+
+        // Play the typing sound for each letter
+        playSound('click');
       }, 50);
       return () => clearTimeout(timeout);
     } else {
@@ -114,17 +117,17 @@ export default function ChapterFive() {
         // Final line typed completely
         const timer = setTimeout(() => {
           // After 5 seconds, navigate to './end'
-          stopSound('mystery');
+          // stopSound('mystery');
           router.push('./end');
         }, 4000);
         return () => clearTimeout(timer);
       }
     }
-  }, [typingIndex, textToDisplay, stage]);
+  }, [typingIndex, textToDisplay, stage, playSound]);
 
   const handleButtonPress = () => {
     setDisplayedText(''); // Clear the displayed text
-    setTextToDisplay('But to get away, we first need to get lost.');
+    setTextToDisplay('In order to get away, we first need to get lost. Let\'s get lost together.');
     setTypingIndex(0);
     setStage(3);
   };
@@ -155,7 +158,7 @@ export default function ChapterFive() {
                 pressed && globalStyles.questionButtonPressed,
               ]}
             >
-              <Text style={globalStyles.questionButtonText}>Um, okay</Text>
+              <Text style={globalStyles.questionButtonText}>That sounds like me.</Text>
             </Pressable>
           </View>
         )}

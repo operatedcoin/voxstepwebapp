@@ -125,10 +125,13 @@ export default function ChapterThree() {
           (prev) => prev + questions[currentQuestionIndex].question[typingIndex]
         );
         setTypingIndex(typingIndex + 1);
+
+        // Play the typing sound for each letter
+        playSound('click');
       }, delay);
       return () => clearTimeout(timeout);
     } else {
-      // Once typing is complete
+      // Once typing is complete, start fade-in animation
       const pauseTimeout = setTimeout(() => {
         setIsTypingComplete(true);
         Animated.timing(fadeAnim, {
@@ -138,14 +141,14 @@ export default function ChapterThree() {
         }).start();
         if (currentQuestionIndex === questions.length - 1) {
           setTimeout(() => {
-            fadeOutSound('mystery', 2000);
+            fadeOutSound('mystery', 2000); // Fade out mystery sound
             router.push('./chapterFour');
           }, 3000);
         }
       }, 1000);
       return () => clearTimeout(pauseTimeout);
     }
-  }, [typingIndex, currentQuestionIndex, fadeAnim]);
+  }, [typingIndex, currentQuestionIndex, fadeAnim, playSound]);
 
   useEffect(() => {
     if (isTypingComplete && buttonsFadeAnim.length > 0) {

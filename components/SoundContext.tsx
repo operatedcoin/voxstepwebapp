@@ -44,6 +44,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
         { name: 'samba', file: require('../assets/audio/samba.mp3') },
         { name: 'mystery', file: require('../assets/audio/mystery.mp3') },
         { name: 'escape', file: require('../assets/audio/escape.m4a') },
+        { name: 'click', file: require('../assets/audio/click.m4a')},
         // Add more sounds as needed
       ];
 
@@ -61,7 +62,13 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
     const sound = soundObjects.current[soundName];
     if (sound) {
       try {
-        await sound.replayAsync(); // Use replayAsync to play from the start
+        const status = await sound.getStatusAsync();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            await sound.stopAsync(); // Stop the sound if it's still playing
+          }
+          await sound.replayAsync(); // Then replay the sound from the start
+        }
       } catch (error) {
         console.log(`Error playing sound ${soundName}:`, error);
       }
