@@ -51,7 +51,7 @@ function BlinkingIcon({ source }: { source: ImageSourcePropType }) {
 
 export default function ChapterThree() {
   const router = useRouter();
-  const { playSound, fadeOutSound } = useSound(); 
+  const { playSound, fadeOutSound, stopSound } = useSound(); 
   const { selectedAnswers, setSelectedAnswers } = useContext(AnswerContext);
 
   useEffect(() => {
@@ -117,38 +117,44 @@ export default function ChapterThree() {
     );
   }, [currentQuestionIndex]);
 
-  useEffect(() => {
-    if (typingIndex < questions[currentQuestionIndex].question.length) {
-      const delay = typingIndex === 0 ? 2000 : 50; // Delay first letter by 2000ms, others by 50ms
-      const timeout = setTimeout(() => {
-        setDisplayedText(
-          (prev) => prev + questions[currentQuestionIndex].question[typingIndex]
-        );
-        setTypingIndex(typingIndex + 1);
+  // Efficient sound control
+useEffect(() => {
+  if (typingIndex < questions[currentQuestionIndex].question.length) {
+    const delay = typingIndex === 0 ? 2000 : 50;  // Delay first letter by 2000ms, others by 50ms
+    const timeout = setTimeout(() => {
+      // Start the 'click' sound when the first letter appears
+      if (typingIndex === 0) {
+        playSound('click');  // Start the 'click' sound in a loop at the beginning of typing
+      }
+      setDisplayedText(
+        (prev) => prev + questions[currentQuestionIndex].question[typingIndex]
+      );
+      setTypingIndex(typingIndex + 1);
+    }, delay);
+    return () => clearTimeout(timeout);
+  } else {
+    // Stop the 'click' sound once the text has finished typing
+    stopSound('click');
 
-        // Play the typing sound for each letter
-        playSound('click');
-      }, delay);
-      return () => clearTimeout(timeout);
-    } else {
-      // Once typing is complete, start fade-in animation
-      const pauseTimeout = setTimeout(() => {
-        setIsTypingComplete(true);
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }).start();
-        if (currentQuestionIndex === questions.length - 1) {
-          setTimeout(() => {
-            fadeOutSound('mystery', 2000); // Fade out mystery sound
-            router.push('./chapterFour');
-          }, 3000);
-        }
-      }, 1000);
-      return () => clearTimeout(pauseTimeout);
-    }
-  }, [typingIndex, currentQuestionIndex, fadeAnim, playSound]);
+    // Once typing is complete, start fade-in animation
+    const pauseTimeout = setTimeout(() => {
+      setIsTypingComplete(true);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+      if (currentQuestionIndex === questions.length - 1) {
+        setTimeout(() => {
+          fadeOutSound('mystery', 2000); // Fade out mystery sound
+          router.push('./chapterFour');
+        }, 3000);
+      }
+    }, 1000);
+    return () => clearTimeout(pauseTimeout);
+  }
+}, [typingIndex, currentQuestionIndex, fadeAnim, playSound, stopSound]);
+
 
   useEffect(() => {
     if (isTypingComplete && buttonsFadeAnim.length > 0) {

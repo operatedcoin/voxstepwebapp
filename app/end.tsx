@@ -40,13 +40,19 @@ export default function EndScreen() {
             You've taken your first Voxstep.{'\n'}{'\n'} 
             This demo is from a larger performance that invites audiences to explore their city.{'\n'}{'\n'}
             If you're interested in hosting short or long-form experiences, or would like to know more about our work, we’d love to hear from you.{'\n'}{'\n'}
-            You can contact Nick on: {''}
+            Operated Coin mixes theatre, mobile media and virtual production to make new experiences that are social and adventurous. {'\n'}
+
+            {/* You can contact Nick on: {''}
             <Text style={{color: '#C7019C', textDecorationLine: 'underline'}} onPress={() => Linking.openURL('mailto:nick@operatedcoin.com')}>
-              nick@operatedcoin.com
-            </Text>{'\n'}{'\n'}
-            Operated Coin mixes theatre, mobile media and virtual production to make new experiences that are social and adventurous. {'\n'}{'\n'}
-            
+              nick@operatedcoin.com */}
           </Text>
+          <Pressable
+          onPress={() => Linking.openURL('mailto:nick@operatedcoin.com')}
+          style={globalStyles.primaryButton} // Assuming you have a primary button style
+        >
+          <Text style={globalStyles.primaryButtonText}>Get in touch</Text>
+        </Pressable>
+        <Pressable  onPress={handleGoToIndex}><Text style={globalStyles.bottomText}>Start experience again</Text></Pressable>
         </View>
 
       {/* Bottom Image anchored to the screen's bottom */}
@@ -54,12 +60,7 @@ export default function EndScreen() {
         source={require('@/assets/images/operatedcoinLogo.png')} 
         style={globalStyles.bottomLogoImage}
       />
-        <Pressable
-          onPress={handleGoToIndex}
-          style={globalStyles.primaryButton} // Assuming you have a primary button style
-        >
-          <Text style={globalStyles.primaryButtonText}>Begin Again</Text>
-        </Pressable>
+
 
         {/* Bottom Image anchored to the screen's bottom */}
         <Image

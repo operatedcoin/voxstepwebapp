@@ -96,16 +96,18 @@ export default function ChapterFive() {
 
   useEffect(() => {
     if (typingIndex < textToDisplay.length) {
+      const delay = typingIndex === 0 ? 2000 : 50; // Delay first letter by 2000ms, others by 50ms
       const timeout = setTimeout(() => {
+        if (typingIndex === 0) {
+          playSound('click'); // Start the 'click' sound when the first letter appears
+        }
         setDisplayedText((prev) => prev + textToDisplay[typingIndex]);
         setTypingIndex(typingIndex + 1);
-
-        // Play the typing sound for each letter
-        playSound('click');
-      }, 50);
+      }, delay);
       return () => clearTimeout(timeout);
     } else {
       // Typing is complete
+      stopSound('click'); // Stop the 'click' sound when typing is complete
       if (stage === 1) {
         // Initial text typed completely
         const timer = setTimeout(() => {
@@ -116,14 +118,14 @@ export default function ChapterFive() {
       } else if (stage === 3) {
         // Final line typed completely
         const timer = setTimeout(() => {
-          // After 5 seconds, navigate to './end'
-          // stopSound('mystery');
+          // After 4 seconds, navigate to './end'
           router.push('./end');
         }, 4000);
         return () => clearTimeout(timer);
       }
     }
-  }, [typingIndex, textToDisplay, stage, playSound]);
+  }, [typingIndex, textToDisplay, stage, playSound, stopSound]);
+  
 
   const handleButtonPress = () => {
     setDisplayedText(''); // Clear the displayed text

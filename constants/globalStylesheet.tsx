@@ -40,6 +40,11 @@ const globalStyles = StyleSheet.create({
     height: 14,
     resizeMode: 'contain',
   },
+  bottomText:{
+    color: '#C7019C',
+    textAlign: 'center',
+    marginTop: 10,
+  },
 
   //Conversation Sections
   convoContainer:{
@@ -64,7 +69,7 @@ const globalStyles = StyleSheet.create({
     fontSize: 36,
     textAlign: 'left',
     marginBottom: 20,
-    marginTop: 60,
+    // marginTop: 60,
     lineHeight: 38,
     color:'#C0FF91',
   },

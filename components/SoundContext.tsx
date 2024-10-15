@@ -44,7 +44,7 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
         { name: 'samba', file: require('../assets/audio/samba.mp3') },
         { name: 'mystery', file: require('../assets/audio/mystery.mp3') },
         { name: 'escape', file: require('../assets/audio/escape.m4a') },
-        { name: 'click', file: require('../assets/audio/click.m4a')},
+        { name: 'click', file: require('../assets/audio/click.mp3')},
         // Add more sounds as needed
       ];
 
