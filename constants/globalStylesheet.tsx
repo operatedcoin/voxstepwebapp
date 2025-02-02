@@ -109,6 +109,38 @@ const globalStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#C7019C',
+  },
+
+  //AI Chat Styles
+  messageContainer: {
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 5,
+    maxWidth: '80%'
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  userMessage: {
+    backgroundColor: '#dcf8c6',
+    alignSelf: 'flex-end',
+  },
+  botMessage: {
+    backgroundColor: '#e4e6eb',
+    alignSelf: 'flex-start',
+  },
+  messageText: {
+    fontSize: 16,
   }
 
 });

@@ -1,9 +1,32 @@
-import { Text, Image, Pressable, ImageBackground, View } from 'react-native';
+import { Text, Image, Pressable, ImageBackground, Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useEffect, useContext } from 'react';
+import { KeepAwakeContext } from '@/components/KeepAwakeContext';
 import globalStyles from '@/constants/globalStylesheet';
+import ReactGA from 'react-ga4';
 
-export default function Index() {
+
+export default function AIChatIntro() {
   const router = useRouter();
+  const { setKeepAwake } = useContext(KeepAwakeContext);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      ReactGA.initialize('G-RSYG02G559'); // Ensure this is your actual Measurement ID
+      ReactGA.send({ hitType: 'pageview', page: window.location.pathname + window.location.search });
+    }
+  }, []);
+
+  const handleBeginButtonPress = async () => {
+    if (Platform.OS === 'web') {
+      ReactGA.event({
+        category: 'Navigation',
+        action: 'Clicked Begin Button',
+      });
+    }
+    //setKeepAwake(true); 
+    router.push('./aichatDemo');
+  };
 
   return (
     <ImageBackground
@@ -27,21 +50,19 @@ export default function Index() {
   <View style={globalStyles.briefingTextContainer}>
     <Text
       style={globalStyles.briefingText}>
-      Select from the following demos{'\n'}{'\n'}
+      A demo interaction with an AI Chat Bot{'\n'}{'\n'}
     </Text>
     <Pressable
-        onPress={() =>router.push('./mcdIntro')}
+        onPress={handleBeginButtonPress}
         style={globalStyles.primaryButton}
       >
         <Text style={globalStyles.primaryButtonText}>
-          Multiple Choice Demo</Text>
+          Continue</Text>
       </Pressable>
       <Pressable
-        onPress={() =>router.push('./aichatIntro')}
-        style={globalStyles.primaryButton}
-      >
-        <Text style={globalStyles.primaryButtonText}>
-          AI Chat Demo</Text>
+        onPress={() =>router.push('./')}>
+        <Text
+        style={globalStyles.bottomText}>Back</Text>
       </Pressable>
       </View>
 
