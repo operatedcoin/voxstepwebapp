@@ -14,7 +14,7 @@ export default function AIChatDemo() {
   const [userInput, setUserInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const apiURL = 'https://openrouter.ai/api/v1/chat/completions';
-  const apiKey = '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';
+  const apiKey = 'REPLACEWITHKEY';
 
   const sendMessage = async () => {
     if (userInput.trim() === '') return;
