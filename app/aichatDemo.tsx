@@ -1,18 +1,24 @@
-import { Text, Image, Pressable, ImageBackground, View, TextInput, FlatList, ScrollView } from 'react-native';
-import { useState } from 'react';
+import { Text, Pressable, ImageBackground, View, TextInput, FlatList, } from 'react-native';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import globalStyles from '@/constants/globalStylesheet';
 import axios from 'axios';
+import { db } from '@/firebaseConfig';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
   sender: string;
   text: string;
+  timestamp: number;
 }
 
 export default function AIChatDemo() {
   const router = useRouter();
   const [userInput, setUserInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [sessionId, setSessionId] = useState<string>(uuidv4());
   const apiURL = 'https://openrouter.ai/api/v1/chat/completions';
   const apiKey = 'REPLACEWITHKEY';
 
@@ -21,33 +27,37 @@ export default function AIChatDemo() {
   
     // Clear input immediately after sending
     const currentInput = userInput;
-    setUserInput('');  
+    setUserInput('');
   
     // Create a new user message
-    const newUserMessage = { sender: 'user', text: currentInput };
+    const newUserMessage: Message = {
+      sender: 'user',
+      text: currentInput,
+      timestamp: Date.now()
+    };
   
     // Append the new user message to the existing conversation
     const updatedMessages = [...messages, newUserMessage];
     setMessages(updatedMessages);
   
     try {
-      // Map your conversation history to the API's expected format.
-      // Convert 'user' to 'user' and 'bot' to 'assistant'.
+
+      // Map conversation history to API's expected format
       const conversationMessages = updatedMessages.map((msg) => ({
         role: msg.sender === 'user' ? 'user' : 'assistant',
         content: msg.text,
       }));
   
-      // Define a system prompt message to guide the AI's responses.
+      // Define a system prompt message
       const systemPrompt = {
         role: 'system',
         content: 'Please provide responses in the voice of a Pirate.'
       };
   
-      // Include the system prompt at the beginning of your payload messages.
+      // Include the system prompt at the beginning
       const payloadMessages = [systemPrompt, ...conversationMessages];
   
-      // Call the API with the updated payload structure
+      // Call the API
       const response = await axios.post(apiURL, {
         model: 'sophosympatheia/rogue-rose-103b-v0.2:free',
         messages: payloadMessages, 
@@ -57,23 +67,39 @@ export default function AIChatDemo() {
         presence_penalty: 1.1,
         repetition_penalty: 1,
         top_k: 41,
-        max_tokens: 200 // length of responses.
+        max_tokens: 200 
       }, {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
       });
-  
+        
       const botResponse = response.data.choices[0].message.content.trim();
   
-      // Append the assistant's response to your message list
-      setMessages(prevMessages => [...prevMessages, { sender: 'bot', text: botResponse }]);
+      // Append the bot's response
+      const newBotMessage: Message = {
+        sender: 'bot',
+        text: botResponse,
+        timestamp: Date.now()
+      };
+      setMessages(prevMessages => [...prevMessages, newBotMessage]);
+  
+      // Update Firestore with the complete messages array
+      const chatRef = doc(db, 'darkPatternChats', sessionId);
+      try {
+        await updateDoc(chatRef, {
+          messages: [...updatedMessages, newBotMessage]
+        });
+        console.log('Firebase update successful');
+      } catch (error) {
+        console.error('Detailed Firebase Error:', JSON.stringify(error));
+      }
+      
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('General error in sendMessage:', error);
     }
   };
-  
   
 
   const renderMessage = ({ item }: { item: Message }) => (
