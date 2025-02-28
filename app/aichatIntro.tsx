@@ -41,10 +41,6 @@ export default function AIChatIntro() {
       }}
     >
     <View style={globalStyles.container}>
-    <Image
-      source={require('@/assets/images/voxstep_logo.png')}
-      style={{ width: 240, height: 91, marginBottom: 20 }}
-      />
 
 
   <View style={globalStyles.briefingTextContainer}>
@@ -57,7 +53,14 @@ export default function AIChatIntro() {
         style={globalStyles.primaryButton}
       >
         <Text style={globalStyles.primaryButtonText}>
-          Continue</Text>
+          Chat</Text>
+      </Pressable>
+      <Pressable
+       onPress={() =>router.push('./aichatRealTime')}
+        style={globalStyles.primaryButton}
+      >
+        <Text style={globalStyles.primaryButtonText}>
+          Real Time Messages</Text>
       </Pressable>
       <Pressable
         onPress={() =>router.push('./')}>

@@ -30,6 +30,7 @@ function MainStack() {
         <Stack.Screen name="index" />
         <Stack.Screen name="mcdIntro" />
         <Stack.Screen name="aichatIntro" />
+        <Stack.Screen name="aichatRealTime" />
         <Stack.Screen name="aichatDemo" />
         <Stack.Screen name="chapterOne" />
         <Stack.Screen name="chapterTwo" />

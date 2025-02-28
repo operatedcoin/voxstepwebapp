@@ -131,6 +131,9 @@ const globalStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
+  label:{
+    fontWeight: 'bold'
+  },
   userMessage: {
     backgroundColor: '#dcf8c6',
     alignSelf: 'flex-end',
@@ -141,7 +144,45 @@ const globalStyles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-  }
+  },
+
+  //Modal
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  parameterContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Ensure items wrap into new lines
+  },
+  row: {
+    flexDirection: 'row',
+    width: '100%', // Ensure the row takes full width
+  },
+  column: {
+    flex: 1,
+    marginRight: 10, // Add spacing between columns
+  },
+  fullWidthContainer: {
+    width: '100%',
+    marginBottom: 20, // Add space after system prompt input
+  },
+  closeButton: {
+    marginTop: 20,
+  },
 
 });
 

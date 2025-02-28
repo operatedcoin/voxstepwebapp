@@ -1,4 +1,4 @@
-import { Text, Pressable, ImageBackground, View, TextInput, FlatList, } from 'react-native';
+import { Text, Pressable, ImageBackground, View, TextInput, FlatList, Modal, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import globalStyles from '@/constants/globalStylesheet';
@@ -16,11 +16,25 @@ interface Message {
 
 export default function AIChatDemo() {
   const router = useRouter();
-  const [userInput, setUserInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [sessionId, setSessionId] = useState<string>(uuidv4());
   const apiURL = 'https://openrouter.ai/api/v1/chat/completions';
   const apiKey = 'REPLACEWITHKEY';
+  
+  //API Variables
+  const [userInput, setUserInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [sysPrompt, setSysPrompt] = useState('Please provide responses in the voice of a Pirate.')
+  const [topPValue, setTopPValue] = useState('0.99');
+  const [topKValue, setTopKValue] = useState('41');
+  const [tempValue, setTempValue] = useState('1.77');
+  const [freqPValue, setFreqPValue] = useState('0.15');
+  const [presPValue, setPresPValue] = useState('1.1');
+  const [repPValue, setRepPValue] = useState('1');
+  const [maxTokensValue, setMaxTokensValue] = useState('4096');
+
+  // Function to open and close modal
+  const [showModal, setShowModal] = useState(true);
+  const toggleModal = () => setShowModal(!showModal);
 
   const sendMessage = async () => {
     if (userInput.trim() === '') return;
@@ -51,23 +65,36 @@ export default function AIChatDemo() {
       // Define a system prompt message
       const systemPrompt = {
         role: 'system',
-        content: 'Please provide responses in the voice of a Pirate.'
+        content: sysPrompt
       };
   
       // Include the system prompt at the beginning
       const payloadMessages = [systemPrompt, ...conversationMessages];
+
+      // Log the request payload for debugging
+      console.log('Payload being sent to OpenRouter API:', {
+        model: 'sophosympatheia/rogue-rose-103b-v0.2:free',
+        messages: payloadMessages,
+        top_p: parseFloat(topPValue),
+        temperature: parseFloat(tempValue),
+        frequency_penalty: parseFloat(freqPValue),
+        presence_penalty: parseFloat(presPValue),
+        repetition_penalty: parseFloat(repPValue),
+        top_k: parseFloat(topKValue),
+        max_tokens: parseFloat(maxTokensValue)
+      });
   
       // Call the API
       const response = await axios.post(apiURL, {
         model: 'sophosympatheia/rogue-rose-103b-v0.2:free',
         messages: payloadMessages, 
-        top_p: 0.99,
-        temperature: 1.77,
-        frequency_penalty: 0.15,
-        presence_penalty: 1.1,
-        repetition_penalty: 1,
-        top_k: 41,
-        max_tokens: 200 
+        top_p: parseFloat(topPValue),
+        temperature: parseFloat(tempValue),
+        frequency_penalty: parseFloat(freqPValue),
+        presence_penalty: parseFloat(presPValue),
+        repetition_penalty: parseFloat(repPValue),
+        top_k: parseFloat(topKValue),
+        max_tokens: parseFloat(maxTokensValue)
       }, {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -88,7 +115,7 @@ export default function AIChatDemo() {
       // Update Firestore with the complete messages array
       const chatRef = doc(db, 'darkPatternChats', sessionId);
       try {
-        await updateDoc(chatRef, {
+        await setDoc(chatRef, {
           messages: [...updatedMessages, newBotMessage]
         });
         console.log('Firebase update successful');
@@ -145,6 +172,108 @@ export default function AIChatDemo() {
       </Pressable>
     
       </View>
+
+      <View style={globalStyles.inputContainer}>
+        <Pressable  onPress={() =>router.push('./aichatIntro')}>
+          <Text style={globalStyles.bottomText}>Back</Text>
+        </Pressable>
+        <View style={{flexGrow: 1}} />
+        <Pressable onPress={toggleModal}>
+          <Text style={globalStyles.bottomText}>Settings</Text>
+        </Pressable>
+      </View>
+
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={toggleModal}
+      >
+        <View style={globalStyles.modalOverlay}>
+          <View style={globalStyles.modalContent}>
+            {/* All parameter inputs in the modal */}
+            <Text style={globalStyles.modalTitle}>Settings</Text>
+
+            <ScrollView contentContainerStyle={globalStyles.parameterContainer}>
+              {/* System Prompt (Full width with larger height) */}
+              <View style={globalStyles.fullWidthContainer}>
+                <Text style={globalStyles.label}>System Prompt</Text>
+                <TextInput
+                  value={sysPrompt}
+                  onChangeText={setSysPrompt}
+                  placeholder="System Prompt"
+                  multiline={true}
+                  style={[{ height: 100, lineHeight: 20, marginBottom: 10, borderColor: '#ccc', borderWidth: 1, paddingHorizontal: 10, borderRadius: 5, verticalAlign: 'top' }]}
+                />
+
+              </View>
+
+              {/* Two columns for the rest of the parameters */}
+              <View style={globalStyles.row}>
+                <View style={globalStyles.column}>
+                  <Text style={globalStyles.label}>Temperature</Text>
+                  <TextInput
+                    value={tempValue}
+                    onChangeText={setTempValue}
+                    placeholder="Temperature"
+                    style={globalStyles.input}
+                  />
+                  <Text style={globalStyles.label}>Top P</Text>
+                  <TextInput
+                    value={topPValue}
+                    onChangeText={setTopPValue}
+                    placeholder="Top P"
+                    style={globalStyles.input}
+                  />
+                  <Text style={globalStyles.label}>Top K</Text>
+                  <TextInput
+                    value={topKValue}
+                    onChangeText={setTopKValue}
+                    placeholder="Top K"
+                    style={globalStyles.input}
+                  />
+                </View>
+
+                <View style={globalStyles.column}>
+                  <Text style={globalStyles.label}>Frequency Penalty</Text>
+                  <TextInput
+                    value={freqPValue}
+                    onChangeText={setFreqPValue}
+                    placeholder="Frequency Penalty"
+                    style={globalStyles.input}
+                  />
+                  <Text style={globalStyles.label}>Repetition Penalty</Text>
+                  <TextInput
+                    value={repPValue}
+                    onChangeText={setRepPValue}
+                    placeholder="Repetition Penalty"
+                    style={globalStyles.input}
+                  />
+                  <Text style={globalStyles.label}>Presence Penalty</Text>
+                  <TextInput
+                    value={presPValue}
+                    onChangeText={setPresPValue}
+                    placeholder="Presence Penalty"
+                    style={globalStyles.input}
+                  />
+                  <Text style={globalStyles.label}>Max Tokens</Text>
+                  <TextInput
+                    value={maxTokensValue}
+                    onChangeText={setMaxTokensValue}
+                    placeholder="Max Tokens"
+                    style={globalStyles.input}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Close Button */}
+            <Pressable onPress={toggleModal} style={globalStyles.closeButton}>
+              <Text style={globalStyles.bottomText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       </View>
     </ImageBackground>
   );
